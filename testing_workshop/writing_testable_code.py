@@ -98,62 +98,67 @@ def save_results(results):
 # from another function directly, pass the function as an argument to the 
 # calling function.
 
-class Item:
-    def __init__(self, name, price):
+class User:
+    def __init__(self, name):
         self.name = name
-        self.price = price
+        self.email = None
 
-class ShoppingCart:
+    def set_email(self, email):
+        self.email = email
+
+class EmailService:
     def __init__(self):
-        self.items = []
+        self.users = []
 
-    def add_item(self, item):
-        self.items.append(item)
+    def add_user(self, user):
+        self.users.append(user)
 
-    def calculate_total_price(self):
-        total_price = 0
-        for item in self.items:
-            total_price += item.price
-        return total_price
+    def send_email(self, message):
+        for user in self.users:
+            if user.email:
+                # Send email to user
+                pass
 
-cart = ShoppingCart()
-cart.add_item(Item("apple", 1.0))
-cart.add_item(Item("banana", 2.0))
-total_price = cart.calculate_total_price()
+user1 = User("Alice")
+user2 = User("Bob")
 
-# In the above example, the calculate_total_price method is tightly coupled with the 
-# ShoppingCart class. This makes it difficult to test the method in isolation.
+email_service = EmailService()
+email_service.add_user(user1)
+email_service.add_user(user2)
 
-def calculate_total_price(items):
-    total_price = 0
-    for item in items:
-        total_price += item.price
-    return total_price
+user1.set_email("alice@example.com")
+user2.set_email("bob@example.com")
 
-class Item:
-    def __init__(self, name, price):
+email_service.send_email("Hello, world!")
+
+# In this example, the User and EmailService classes are tightly coupled because 
+# the EmailService class depends on the User class to provide email addresses. 
+# This makes it difficult to test the EmailService class in isolation, 
+# because it requires instances of the User class to be created and configured.
+
+# To avoid tight coupling, we can use dependency injection to pass in the required 
+# dependencies as arguments. Here's an example of how we can refactor the above code:
+
+class User:
+    def __init__(self, name, email=None):
         self.name = name
-        self.price = price
+        self.email = email
 
-class ShoppingCart:
-    def __init__(self):
-        self.items = []
+class EmailService:
+    def __init__(self, users):
+        self.users = users
 
-    def add_item(self, item):
-        self.items.append(item)
+    def send_email(self, message):
+        for user in self.users:
+            if user.email:
+                # Send email to user
+                pass
 
-    def calculate_total_price(self, calculate_total_price_func):
-        return calculate_total_price_func(self.items)
+user1 = User("Alice", "alice@example.com")
+user2 = User("Bob", "bob@example.com")
 
-cart = ShoppingCart()
-cart.add_item(Item("apple", 1.0))
-cart.add_item(Item("banana", 2.0))
-total_price = cart.calculate_total_price(calculate_total_price)
-
-# In the above example, the calculate_total_price method is no longer tightly coupled 
-# with the ShoppingCart class. Instead, it is passed as an argument to the
-#  calculate_total_price method of the ShoppingCart class. 
-# This makes it easier to test the method in isolation.
+email_service = EmailService([user1, user2])
+email_service.send_email("Hello, world!")
 
 #endregion
 
