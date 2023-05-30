@@ -49,8 +49,15 @@ def save_results(results):
 
 # Counterexample: A function that is designed to modify the state of the program
 counter = 0
+def analyze_data():
+    global counter
+    if counter > 10:
+        counter -= 1
+    pass
+
 def increment_counter():
     global counter
+    analyze_data()
     counter += 1
 
 # Example: A function with side effects that should be made explicit
