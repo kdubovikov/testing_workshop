@@ -44,8 +44,10 @@ def save_results(results):
 # Side effects are changes that a function makes to the state of the program 
 # outside of its own scope. To make them explicit, you can return the new 
 # state of the program as a result of the function. For example, instead of
-#  modifying a global variable inside a function, return the new value of the 
+# modifying a global variable inside a function, return the new value of the 
 # variable as the result of the function.
+# Try to layer your code in a way to push all side effects into the smallest area possible.
+# And try make all other code stateless
 
 # Counterexample: A function that is designed to modify the state of the program
 counter = 0
@@ -136,6 +138,8 @@ email_service.send_email("Hello, world!")
 # This makes it difficult to test the EmailService class in isolation, 
 # because it requires instances of the User class to be created and configured.
 
+# Fix:
+# region
 # To avoid tight coupling, we can use dependency injection to pass in the required 
 # dependencies as arguments. Here's an example of how we can refactor the above code:
 
@@ -159,6 +163,7 @@ user2 = User("Bob", "bob@example.com")
 
 email_service = EmailService([user1, user2])
 email_service.send_email("Hello, world!")
+#endregion
 
 #endregion
 
@@ -188,6 +193,8 @@ cart.remove_item("apple")
 # This can lead to unexpected behavior if the list is modified in one part 
 # of the code and then accessed in another part of the code.
 
+# Fix:
+# region
 from collections import namedtuple
 
 Item = namedtuple("Item", ["name", "price"])
@@ -211,6 +218,7 @@ cart.remove_item(Item("apple", 1.0))
 # a list of named tuples. Named tuples are immutable, so the items list 
 # cannot be modified after it is created. 
 # This avoids mutable state and makes the code easier to reason about.
+# endregion
 
 #endregion
 
@@ -238,6 +246,8 @@ log("This is a debug message")
 # This makes it difficult to reason about the behavior of the log function, 
 # because the CONFIG dictionary can be modified from anywhere in the program.
 
+# Fix:
+# region
 def log(message, debug=False, log_level="INFO"):
     if debug:
         print(f"[{log_level}] {message}")
@@ -248,6 +258,7 @@ log("This is a debug message", debug=True, log_level="INFO")
 # This makes it easier to reason about the behavior of the log function, 
 # because the function arguments are explicitly passed to the function. 
 # This avoids global state and makes the code easier to test and maintain.
+# endregion
 
 #endregion
 
@@ -290,6 +301,8 @@ total_price = order.calculate_total_price()
 # inside its constructor. This makes it difficult to test the Order class in isolation,
 # because it is tightly coupled with the ShoppingCart class.
 
+# Fix:
+# region
 class ShoppingCart:
     def __init__(self):
         self.items = []
@@ -324,5 +337,25 @@ total_price = order.calculate_total_price()
 # This makes it easier to test the Order class in isolation, 
 # because we can pass in a mock ShoppingCart object for testing purposes. 
 # This avoids tight coupling and makes the code easier to test and maintain.
+# endregion
 
 #endregion
+
+# In the end, writing testable code is writing clean and maintainable code. 
+# It will benefit you in multiple ways.
+
+# How to cover existing codebase with tests?
+#region
+# If you have a large codebase without tests, it can be difficult to add tests to it.
+# Here are some strategies for adding tests to an existing codebase:
+
+# - Key Insight: Start small. Keep up a routine. Make it a habbit. 
+#   A team of 2 developers, who add 2 tests 3 times a week can add 48 tests in a month
+# - Add time to write tests to your dev estimates
+# - Add tests when you fix bugs. This will help prevent the bugs from reoccurring
+# - Use mocking liberally to ease the process of adding tests
+# - Break up complex functions into smaller functions that are easier to test
+# - Start with the most important parts of the codebase
+# - Start with the parts of the codebase that are easiest to test
+# - Start with the parts of the codebase that are most likely to change or bereak
+# endregion
