@@ -8,11 +8,11 @@
 # processes the data, and writes the output to a database, 
 # break it down into separate functions for each task.
 
-# Counterexample: A simple function that does not need to be broken down
+# A simple function that does not need to be broken down
 def add_numbers(a, b):
     return a + b
 
-# Example: A complex function needs to be broken down
+# A complex function needs to be broken down
 # So that we can test all components in isolation
 def process_data(data):
     # Step 1: Clean the data
@@ -100,69 +100,53 @@ def save_results(results):
 # from another function directly, pass the function as an argument to the 
 # calling function.
 
+class Database:
+    def __init__(self):
+        self.data = {}
+
+    def save(self, key, value):
+        self.data[key] = value
+
 class User:
     def __init__(self, name):
         self.name = name
-        self.email = None
+        self.db = Database()
 
-    def set_email(self, email):
-        self.email = email
-
-class EmailService:
-    def __init__(self):
-        self.users = []
-
-    def add_user(self, user):
-        self.users.append(user)
-
-    def send_email(self, message):
-        for user in self.users:
-            if user.email:
-                # Send email to user
-                pass
+    def save(self):
+        self.db.save(self.name, self)
 
 user1 = User("Alice")
-user2 = User("Bob")
+user1.save()
 
-email_service = EmailService()
-email_service.add_user(user1)
-email_service.add_user(user2)
-
-user1.set_email("alice@example.com")
-user2.set_email("bob@example.com")
-
-email_service.send_email("Hello, world!")
-
-# In this example, the User and EmailService classes are tightly coupled because 
-# the EmailService class depends on the User class to provide email addresses. 
-# This makes it difficult to test the EmailService class in isolation, 
-# because it requires instances of the User class to be created and configured.
+# In this example, the User and Database classes are tightly coupled because 
+# the User class creates an instance of the Database class in its constructor 
+# and calls its save method directly. This makes it difficult to test the User 
+# class in isolation, because it requires an instance of the Database class to be 
+# created and configured.
 
 # Fix:
 # region
 # To avoid tight coupling, we can use dependency injection to pass in the required 
 # dependencies as arguments. Here's an example of how we can refactor the above code:
 
+class Database:
+    def __init__(self):
+        self.data = {}
+
+    def save(self, key, value):
+        self.data[key] = value
+
 class User:
-    def __init__(self, name, email=None):
+    def __init__(self, name, db):
         self.name = name
-        self.email = email
+        self.db = db
 
-class EmailService:
-    def __init__(self, users):
-        self.users = users
+    def save(self):
+        self.db.save(self.name, self)
 
-    def send_email(self, message):
-        for user in self.users:
-            if user.email:
-                # Send email to user
-                pass
-
-user1 = User("Alice", "alice@example.com")
-user2 = User("Bob", "bob@example.com")
-
-email_service = EmailService([user1, user2])
-email_service.send_email("Hello, world!")
+db = Database()
+user1 = User("Alice", db)
+user1.save()
 #endregion
 
 #endregion
@@ -174,6 +158,13 @@ email_service.send_email("Hello, world!")
 # For example, instead of using a list to store data that is modified frequently, 
 # use a tuple or a named tuple that cannot be modified.
 
+class CartItem:
+    def __init__(self, name):
+        self.name = name
+        
+    def __repr__(self):
+        return self.name
+    
 class ShoppingCart:
     def __init__(self):
         self.items = []
@@ -185,9 +176,13 @@ class ShoppingCart:
         self.items.remove(item)
 
 cart = ShoppingCart()
-cart.add_item("apple")
-cart.add_item("banana")
-cart.remove_item("apple")
+apple = CartItem("apple")
+cart.add_item(apple)
+banana = CartItem("banana")
+cart.add_item(banana)
+cart.remove_item(apple)
+
+print(cart.items)
 
 # In the above example, the items list in the ShoppingCart class is mutable. 
 # This can lead to unexpected behavior if the list is modified in one part 
@@ -351,6 +346,7 @@ total_price = order.calculate_total_price()
 
 # - Key Insight: Start small. Keep up a routine. Make it a habbit. 
 #   A team of 2 developers, who add 2 tests 3 times a week can add 48 tests in a month
+# - Key Insight 2: Use Copilot and ChatGPT
 # - Add time to write tests to your dev estimates
 # - Add tests when you fix bugs. This will help prevent the bugs from reoccurring
 # - Use mocking liberally to ease the process of adding tests
