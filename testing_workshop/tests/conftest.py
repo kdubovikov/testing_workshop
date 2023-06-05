@@ -30,3 +30,7 @@ def metrics():
 @pytest.fixture(scope="session")
 def metrics_with_duplicate(metrics):
     return metrics + [Metric(name="foo", value=1)]
+
+@pytest.fixture(scope="session")
+def quote():
+    return [ {"q":"123","a":"Michael Jordan","h":"<blockquote>&ldquo;Learning is a gift, even when pain is your teacher.&rdquo; &mdash; <footer>Michael Jordan</footer></blockquote>"} ]

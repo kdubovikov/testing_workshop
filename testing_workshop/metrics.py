@@ -27,7 +27,7 @@ def find_and_square_metric(name: str) -> Optional[Metric]:
     metric = find_metric_by_name(name)
 
     if metric:
-        metric.value = metric.value ** 2
+        metric.value = metric.value ** 2 # side effect!!!
 
     insert_metric_normalized_name(metric)
 

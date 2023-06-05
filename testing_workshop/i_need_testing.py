@@ -6,6 +6,9 @@ def get_random_quote():
     quote = requests.get('https://zenquotes.io/api/random')
     return quote.json()[0]['q']
 
+def construct_meme_url(meme_name: str, top_text: str, bottom_text: str):
+    return f"https://apimeme.com/meme?meme={meme_name}&top={top_text}&bottom={bottom_text}"
+
 def generate_meme(top_text: str, bottom_text: str):
     """Generate a meme from apimeme.com"""
     memes = [
@@ -23,14 +26,14 @@ def generate_meme(top_text: str, bottom_text: str):
     ]
 
     random_meme = random.choice(memes)
-    url = f"https://apimeme.com/meme?meme={random_meme}&top={top_text}&bottom={bottom_text}"
+    url = construct_meme_url(random_meme, top_text, bottom_text)
     meme = requests.get(url)
     return meme.content
 
 def save_meme(meme: bytes):
     """Save the meme to a file"""
-    with open('meme.jpg', 'wb') as f:
-        f.write(meme)
+    f = open('meme.jpg', 'wb')
+    f.write(meme)
 
 def generate_meme_headings(quote: str) -> tuple[str, str]:
     """Generate the top and bottom text for the meme, splitting the quote in half word-wise"""
